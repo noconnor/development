@@ -52,7 +52,12 @@ function launch_docker_environment() {
     docker build --tag="${TARGET}" .
     PORTS=""
     for PORT in ${EXPOSE_PORTS}; do PORTS+="-p ${PORT}:${PORT} "; done
-    docker run ${PORTS} -it ${TARGET} bash
+
+    if  [ -t 1 ]; then
+        docker run ${PORTS} -it ${TARGET} bash
+    else
+        echo "Run `docker run ${PORTS} -it ${TARGET} bash` to start environment"
+    fi
 }
 
 # pre-requisites
