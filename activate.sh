@@ -55,7 +55,7 @@ function launch_docker_environment() {
 
     echo "#!/usr/bin/env bash" > start.sh
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
-    echo "docker run ${PORTS} -it ${TARGET} bash" >> start.sh
+    echo "docker run -w /home/project -v $(pwd):/home/project ${PORTS} -it ${TARGET} bash" >> start.sh
     chmod +x start.sh
 
     echo "To start env manually run: ./start.sh"
