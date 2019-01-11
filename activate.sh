@@ -54,9 +54,9 @@ function launch_docker_environment() {
     for PORT in ${EXPOSE_PORTS}; do PORTS+="-p ${PORT}:${PORT} "; done
 
     if  [ -t 1 ]; then
-        docker run ${PORTS} -it ${TARGET} bash
-    else
         echo "Run `docker run ${PORTS} -it ${TARGET} bash` to start environment"
+    else
+        docker run ${PORTS} -it ${TARGET} bash
     fi
 }
 
