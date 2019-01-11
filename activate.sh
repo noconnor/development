@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-
+DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker/
 TARGET=${1}
 DOCKER_FILE_NAME=dockerfile-${1}
-DOCKER_FILE=
 EXPOSE_PORTS=
 
 function check_for_brew() {
@@ -34,20 +31,25 @@ function initialise_docker_machine() {
 }
 
 function find_docker_file() {
-    echo "Looking for ${DOCKER_FILE_NAME} in ${SCRIPT_DIR} ..."
-    DOCKER_FILE=$(find ${SCRIPT_DIR} -name ${DOCKER_FILE_NAME});
-    [ ! -f "${DOCKER_FILE}" ] && echo "Target (${DOCKER_FILE_NAME}) not found" && exit 1
-    echo "Docker file: ${DOCKER_FILE}"
+    echo "Looking for ${DOCKER_FILE_NAME} at ${DOCKER_ROOT} ..."
+    URL=${DOCKER_ROOT}${DOCKER_FILE_NAME}
+    if ( curl -o/dev/null -sfI "${URL}" ); then
+        rm Dockerfile
+        curl "${URL}" -o Dockerfile
+        echo "Docker file downloaded!"
+    else
+       echo "Target (${URL}) not found" && exit 1
+    fi
 }
 
 function find_expose_ports() {
-    EXPOSE_PORTS=$(grep -i "EXPOSE" ${DOCKER_FILE} | cut -d' ' -f2-)
+    EXPOSE_PORTS=$(grep -i "EXPOSE" Dockerfile | cut -d' ' -f2-)
     echo "Exposing ports: ${EXPOSE_PORTS}"
 }
 
 function launch_docker_environment() {
-    echo "Launching ${DOCKER_FILE} ..."
-    docker build -f "${DOCKER_FILE}" --tag="${TARGET}" .
+    echo "Launching docker ..."
+    docker build --tag="${TARGET}" .
     PORTS=""
     for PORT in ${EXPOSE_PORTS}; do PORTS+="-p ${PORT}:${PORT} "; done
     docker run ${PORTS} -it ${TARGET} bash
