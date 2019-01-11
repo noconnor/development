@@ -53,12 +53,14 @@ function launch_docker_environment() {
     PORTS=""
     for PORT in ${EXPOSE_PORTS}; do PORTS+="-p ${PORT}:${PORT} "; done
 
-    if [[ -t 1 ]]; then
-        echo "Starting docker container..."
-        docker run ${PORTS} -it ${TARGET} bash
-    else
-        echo "Run: docker run ${PORTS} -it ${TARGET} bash"
-    fi
+    echo "#!/usr/bin/env bash" > start.sh
+    echo "eval \"\$(docker-machine env default)\"" >> start.sh
+    echo "docker run ${PORTS} -it ${TARGET} bash" >> start.sh
+    chmod +x start.sh
+
+    echo "To start env manually run: ./start.sh"
+    (tty -s)
+    [ $? -eq 0 ] && ./start.sh
 }
 
 # pre-requisites
