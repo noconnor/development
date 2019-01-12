@@ -12,16 +12,16 @@ function check_for_brew() {
 
 function check_for_virtualbox() {
     which virtualbox
-    [ $? -ne 0 ] && echo "virtualbox is not installed, run `brew cask install virtualbox`" && exit 1
+    [ $? -ne 0 ] && echo "virtualbox is not installed, run: brew cask install virtualbox" && exit 1
 }
 function check_for_docker() {
     which docker
-    [ $? -ne 0 ] && echo "Docker is not installed, run `brew cask install docker`" && exit 1
+    [ $? -ne 0 ] && echo "Docker is not installed, run: brew cask install docker" && exit 1
 }
 
 function check_for_docker_machine() {
     which docker-machine
-    [ $? -ne 0 ] && echo "Docker machine is not installed, run `brew install docker-machine`" && exit 1
+    [ $? -ne 0 ] && echo "Docker machine is not installed, run: brew install docker-machine" && exit 1
 }
 
 function initialise_docker_machine() {
