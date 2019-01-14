@@ -13,7 +13,6 @@ function check_docker_setup(){
 }
 
 function check_linux_docker_setup() {
-    "echo TODO"
     docker --version
     if [ $? -ne 0 ]; then
       echo "Docker is not installed, installing now..."
