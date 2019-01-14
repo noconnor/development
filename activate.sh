@@ -12,6 +12,7 @@ function check_docker_setup(){
     [ "${OS}" == "Linux" ] && check_linux_docker_setup
 }
 
+
 function check_linux_docker_setup() {
     "echo TODO"
 }
