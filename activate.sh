@@ -14,6 +14,16 @@ function check_docker_setup(){
 
 function check_linux_docker_setup() {
     "echo TODO"
+    docker --version
+    if [ $? -ne 0 ]; then
+      echo "Docker is not installed, installing now..."
+      sudo yum --enablerepo=extras install -y docker
+      [ $? -ne 0 ] && { echo "Docker install failed, exiting!"; exit 1 }
+      sudo groupadd docker
+      sudo usermod -aG docker ${USER}
+      newgrp docker
+    fi
+    sudo systemctl restart docker || { echo "ERROR: unable to start docker systemctl process"; exit 1; }
 }
 
 function check_mac_osx_docker_setup() {
