@@ -9,4 +9,4 @@ RUN yum install -y nodejs
 
 RUN echo 'alias ll="ls -al"' >> ~/.bashrc
 
-EXPOSE 8080 8081 8082 9229 80
+EXPOSE 8080 8081 8082 9229 80 3000
