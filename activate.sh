@@ -53,7 +53,7 @@ function download_docker_file() {
     echo "Looking for ${DOCKER_FILE_NAME} at ${DOCKER_ROOT} ..."
     URL=${DOCKER_ROOT}${DOCKER_FILE_NAME}
     if ( curl -o/dev/null -sfI "${URL}" ); then
-        rm Dockerfile
+        [ -f Dockerfile ] && rm Dockerfile
         curl "${URL}" -o Dockerfile
         echo "Docker file downloaded!"
     else
