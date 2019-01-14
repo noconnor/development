@@ -4,24 +4,24 @@ DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker
 TARGET=${1}
 DOCKER_FILE_NAME=dockerfile-${1}
 EXPOSE_PORTS=
+OS=$(uname -s)
+MOUNT_DIR=$(pwd)
 
-function check_for_brew() {
-    which brew
-    [ $? -ne 0 ] && echo "brew is not installed, see https://brew.sh/" && exit 1
+function check_docker_setup(){
+    [ "${OS}" == "Darwin" ] && check_mac_osx_docker_setup
+    [ "${OS}" == "Linux" ] && check_linux_docker_setup
 }
 
-function check_for_virtualbox() {
-    which virtualbox
-    [ $? -ne 0 ] && echo "virtualbox is not installed, run `brew cask install virtualbox`" && exit 1
-}
-function check_for_docker() {
-    docker --version
-    [ $? -ne 0 ] && echo "Docker is not installed, run `brew cask install docker`" && exit 1
+function check_linux_docker_setup() {
+    "echo TODO"
 }
 
-function check_for_docker_machine() {
-    docker-machine --version
-    [ $? -ne 0 ] && echo "Docker machine is not installed, run `brew install docker-machine`" && exit 1
+function check_mac_osx_docker_setup() {
+    which brew || { echo "brew is not installed, see https://brew.sh/"; exit 1; }
+    which virtualbox || { echo "virtualbox is not installed, run: brew cask install virtualbox"; exit 1; }
+    docker --version || { echo "Docker is not installed, run: brew cask install docker"; exit 1; }
+    docker-machine --version || { echo "Docker machine is not installed, run: brew install docker-machine"; exit 1; }
+    initialise_docker_machine
 }
 
 function initialise_docker_machine() {
@@ -30,7 +30,7 @@ function initialise_docker_machine() {
     eval "$(docker-machine env default)"
 }
 
-function find_docker_file() {
+function download_docker_file() {
     echo "Looking for ${DOCKER_FILE_NAME} at ${DOCKER_ROOT} ..."
     URL=${DOCKER_ROOT}${DOCKER_FILE_NAME}
     if ( curl -o/dev/null -sfI "${URL}" ); then
@@ -42,7 +42,7 @@ function find_docker_file() {
     fi
 }
 
-function find_expose_ports() {
+function identify_ports_to_expose() {
     EXPOSE_PORTS=$(grep -i "EXPOSE" Dockerfile | cut -d' ' -f2-)
     echo "Exposing ports: ${EXPOSE_PORTS}"
 }
@@ -53,9 +53,11 @@ function launch_docker_environment() {
     PORTS=""
     for PORT in ${EXPOSE_PORTS}; do PORTS+="-p ${PORT}:${PORT} "; done
 
+    [[ ${OS} == "Darwin" && "${MOUNT_DIR}" != ${HOME}* ]] && echo "WARN: \"VirtualBox Shared Folder\" permissions required to mount an non ${HOME} directory"
+
     echo "#!/usr/bin/env bash" > start.sh
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
-    echo "docker run -w /home/project -v $(pwd):/home/workspace ${PORTS} -it ${TARGET} bash" >> start.sh
+    echo "docker run -w /home/workspace -v ${MOUNT_DIR}:/home/workspace ${PORTS} -it ${TARGET} bash" >> start.sh
     chmod +x start.sh
 
     echo "To start env manually run: ./start.sh"
@@ -63,16 +65,8 @@ function launch_docker_environment() {
     [ $? -eq 0 ] && ./start.sh
 }
 
-# pre-requisites
-check_for_brew
-check_for_virtualbox
-check_for_docker
-check_for_docker_machine
 
-# initialise environment
-initialise_docker_machine
-
-# run docker file
-find_docker_file
-find_expose_ports
+check_docker_setup
+download_docker_file
+identify_ports_to_expose
 launch_docker_environment
