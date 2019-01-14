@@ -13,7 +13,7 @@ Development environment setup scripts
 To install the `react` development environment, run the following command
 
 ```
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/activate.sh | bash -s react
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install.sh | bash -s react
 ```
 
 This will generate a `start.sh` script that can be used to start your docker development environment
