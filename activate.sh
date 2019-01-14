@@ -12,13 +12,12 @@ function check_docker_setup(){
     [ "${OS}" == "Linux" ] && check_linux_docker_setup
 }
 
-
 function check_linux_docker_setup() {
     "echo TODO"
 }
 
 function check_mac_osx_docker_setup() {
-    which brew || { echo "brew is not installed, see https://brew.sh/"; exit 1; }
+    which brew || { echo "WARN brew is not installed, see https://brew.sh/"; }
     which virtualbox || { echo "virtualbox is not installed, run: brew cask install virtualbox"; exit 1; }
     docker --version || { echo "Docker is not installed, run: brew cask install docker"; exit 1; }
     docker-machine --version || { echo "Docker machine is not installed, run: brew install docker-machine"; exit 1; }
