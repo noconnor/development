@@ -4,15 +4,21 @@ DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker
 TARGET=${1}
 DOCKER_FILE_NAME=dockerfile-${1}
 EXPOSE_PORTS=
+DOCKER_PORT_MAPPING=
 OS=$(uname -s)
 MOUNT_DIR=$(pwd)
+WARNINGS=
 
-function check_docker_setup(){
-    [ "${OS}" == "Darwin" ] && check_mac_osx_docker_setup
-    [ "${OS}" == "Linux" ] && check_linux_docker_setup
+function warnings(){
+    echo "${WARNINGS}"
 }
 
-function check_linux_docker_setup() {
+function docker_setup(){
+    [ "${OS}" == "Darwin" ] && docker_setup_macosx
+    [ "${OS}" == "Linux" ] && docker_setup_linux
+}
+
+function docker_setup_linux() {
     docker --version
     if [ $? -ne 0 ]; then
       echo "Docker is not installed, installing now..."
@@ -20,16 +26,19 @@ function check_linux_docker_setup() {
       [ $? -ne 0 ] && { echo "Docker install failed, exiting!"; exit 1; }
       sudo groupadd docker
       sudo usermod -aG docker ${USER}
-      newgrp docker
+      WARNINGS+="WARN: logout and back in again to run docker as a non-sudo users\n"
     fi
     sudo systemctl restart docker || { echo "ERROR: unable to start docker systemctl process"; exit 1; }
 }
 
-function check_mac_osx_docker_setup() {
-    which brew || { echo "WARN brew is not installed, see https://brew.sh/"; }
-    which virtualbox || { echo "virtualbox is not installed, run: brew cask install virtualbox"; exit 1; }
-    docker --version || { echo "Docker is not installed, run: brew cask install docker"; exit 1; }
-    docker-machine --version || { echo "Docker machine is not installed, run: brew install docker-machine"; exit 1; }
+function docker_setup_macosx() {
+    docker --version
+    if [ $? -ne 0 ]; then
+        which brew || { WARNINGS+="WARN: brew is required, see https://brew.sh/"; exit 1; }
+        which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
+        docker --version || { echo "Installing docker..."; brew cask install docker; [ $? -ne 0 ] && exit 1; }
+        docker-machine --version || { echo "Installing docker machine..."; brew install docker-machine; [ $? -ne 0 ] && exit 1; }
+    fi
     initialise_docker_machine
 }
 
@@ -51,31 +60,47 @@ function download_docker_file() {
     fi
 }
 
-function identify_ports_to_expose() {
-    EXPOSE_PORTS=$(grep -i "EXPOSE" Dockerfile | cut -d' ' -f2-)
-    echo "Exposing ports: ${EXPOSE_PORTS}"
+function generate_docker_port_mappings() {
+    local expose=$(grep -i "EXPOSE" Dockerfile | cut -d' ' -f2-)
+    DOCKER_PORT_MAPPING=""
+    for PORT in ${expose}; do DOCKER_PORT_MAPPING+="-p ${PORT}:${PORT} "; done
+}
+
+function generate_start_script_macosx() {
+
+    if [[ "${MOUNT_DIR}" != ${HOME}* ]]; then
+        WARNINGS+="WARN: \"VirtualBox Shared Folder\" permissions required to mount an non ${HOME} directory\n"
+    fi
+
+    docker build --tag=${TARGET} .
+    echo "#!/usr/bin/env bash" > start.sh
+    echo "eval \"\$(docker-machine env default)\"" >> start.sh
+    echo "docker run -w /home/workspace -v ${MOUNT_DIR}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash" >> start.sh
+    chmod +x start.sh
+}
+
+function generate_start_script_linux(){
+    sg docker -c "docker build --tag=${TARGET} ."
+    echo "#!/usr/bin/env bash" > start.sh
+    echo "sg docker -c \"docker run -w /home/workspace -v ${MOUNT_DIR}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash\"" >> start.sh
+
 }
 
 function launch_docker_environment() {
-    echo "Launching docker ..."
-    docker build --tag="${TARGET}" .
-    PORTS=""
-    for PORT in ${EXPOSE_PORTS}; do PORTS+="-p ${PORT}:${PORT} "; done
 
-    [[ ${OS} == "Darwin" && "${MOUNT_DIR}" != ${HOME}* ]] && echo "WARN: \"VirtualBox Shared Folder\" permissions required to mount an non ${HOME} directory"
+    [ ${OS} == "Darwin" ] && generate_start_script_macosx
+    [ ${OS} == "Linux" ]  && generate_start_script_linux
 
-    echo "#!/usr/bin/env bash" > start.sh
-    echo "eval \"\$(docker-machine env default)\"" >> start.sh
-    echo "docker run -w /home/workspace -v ${MOUNT_DIR}:/home/workspace ${PORTS} -it ${TARGET} bash" >> start.sh
     chmod +x start.sh
 
     echo "To start env manually run: ./start.sh"
     (tty -s)
-    [ $? -eq 0 ] && ./start.sh
+    [ $? -eq 0 ] && { echo "Launching docker ..."; ./start.sh; }
 }
 
+trap warnings EXIT
 
-check_docker_setup
+docker_setup
 download_docker_file
-identify_ports_to_expose
+generate_docker_port_mappings
 launch_docker_environment

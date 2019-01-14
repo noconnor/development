@@ -1,9 +1,11 @@
-FROM node:8
+FROM centos:centos7
 
+RUN yum -y update
+
+RUN curl -sL https://rpm.nodesource.com/setup_8.x | bash -
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 
-RUN apt-get update
-RUN apt-get install -y vim
+RUN sudo yum install -y nodejs
 
 RUN echo 'alias ll="ls -al"' >> ~/.bashrc
 
