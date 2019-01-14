@@ -18,7 +18,7 @@ function check_linux_docker_setup() {
     if [ $? -ne 0 ]; then
       echo "Docker is not installed, installing now..."
       sudo yum --enablerepo=extras install -y docker
-      [ $? -ne 0 ] && { echo "Docker install failed, exiting!"; exit 1 }
+      [ $? -ne 0 ] && { echo "Docker install failed, exiting!"; exit 1; }
       sudo groupadd docker
       sudo usermod -aG docker ${USER}
       newgrp docker
