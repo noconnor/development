@@ -5,7 +5,10 @@ RUN yum -y update
 RUN curl -sL https://rpm.nodesource.com/setup_8.x | bash -
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 
+RUN yum install -y initscripts && yum clean all
 RUN yum install -y nodejs
+RUN yum install -y epel-release
+RUN yum install -y python-pip
 
 RUN echo 'alias ll="ls -al"' >> ~/.bashrc
 
