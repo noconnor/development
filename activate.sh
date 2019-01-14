@@ -23,20 +23,21 @@ function docker_setup_linux() {
     if [ $? -ne 0 ]; then
       echo "Docker is not installed, installing now..."
       sudo yum --enablerepo=extras install -y docker
-      [ $? -ne 0 ] && { echo "Docker install failed, exiting!"; exit 1; }
+      [ $? -ne 0 ] && { WARNINGS+="Docker install failed, exiting!\n"; exit 1; }
       sudo groupadd docker
       sudo usermod -aG docker ${USER}
       WARNINGS+="WARN: logout and back in again to run docker as a non-sudo users\n"
     fi
-    sudo systemctl restart docker || { echo "ERROR: unable to start docker systemctl process"; exit 1; }
+    sudo systemctl restart docker || { WARNINGS+="ERROR: unable to start docker systemctl process\n"; exit 1; }
 }
 
 function docker_setup_macosx() {
     docker --version
     if [ $? -ne 0 ]; then
-        which brew || { WARNINGS+="WARN: brew is required, see https://brew.sh/"; exit 1; }
+        which brew || { WARNINGS+="WARN: brew is required, see https://brew.sh/\n"; exit 1; }
         which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
-        docker --version || { echo "Installing docker..."; brew cask install docker; [ $? -ne 0 ] && exit 1; }
+        docker --version || { echo "Installing docker..."; brew install docker; [ $? -ne 0 ] && exit 1; }
+        docker --version || { echo "Re-installing docker..."; brew reinstall docker; [ $? -ne 0 ] && exit 1; }
         docker-machine --version || { echo "Installing docker machine..."; brew install docker-machine; [ $? -ne 0 ] && exit 1; }
     fi
     initialise_docker_machine
@@ -56,7 +57,7 @@ function download_docker_file() {
         curl "${URL}" -o Dockerfile
         echo "Docker file downloaded!"
     else
-       echo "Target (${URL}) not found" && exit 1
+       WARNINGS+="Target (${URL}) not found\n" && exit 1
     fi
 }
 
