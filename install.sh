@@ -8,6 +8,8 @@ DOCKER_PORT_MAPPING=
 OS=$(uname -s)
 MOUNT_DIR=$(pwd)
 WARNINGS=
+CPUS=$(sysctl hw.logicalcpu | cut -d':' -f2)
+RAM=4096
 
 function warnings(){
     echo "${WARNINGS}"
@@ -40,12 +42,15 @@ function docker_setup_macosx() {
         docker --version || { echo "Re-installing docker..."; brew reinstall docker; [ $? -ne 0 ] && exit 1; }
         docker-machine --version || { echo "Installing docker machine..."; brew install docker-machine; [ $? -ne 0 ] && exit 1; }
     fi
-    initialise_docker_machine
+    initialise_docker_machine_macosx
 }
 
-function initialise_docker_machine() {
+function initialise_docker_machine_macosx() {
     docker-machine ls | grep default
-    [ $? -ne 0 ] && echo "Creating default virtual machine..." && docker-machine create --driver virtualbox default
+    if [ $? -ne 0 ]; then
+        echo "Creating default virtual machine..."
+        docker-machine create --virtualbox-cpu-count ${CPUS} --virtualbox-memory ${RAM} --driver virtualbox default
+    fi
     eval "$(docker-machine env default)"
 }
 
