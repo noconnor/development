@@ -11,6 +11,17 @@ INFO=""
 CPUS=$(sysctl hw.logicalcpu | cut -d':' -f2)
 RAM=4096
 
+function check_target(){
+    # add switch
+    case ${TARGET} in
+        react)
+            ;;
+        *)
+            INFO+="Unexpected target profile: ${TARGET}"
+            exit 1;
+     esac
+}
+
 function info(){
     echo "${INFO}"
 }
@@ -121,7 +132,8 @@ function launch_docker_environment() {
 
 trap info EXIT
 
+check_target
 docker_setup
-#download_docker_file
+download_docker_file
 generate_docker_port_mappings
 launch_docker_environment
