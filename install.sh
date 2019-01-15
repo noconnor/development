@@ -97,14 +97,12 @@ function generate_start_script_macosx() {
 
     local volume=shared
     # setup docker sync
+    URL=${DOCKER_ROOT}docker-sync.yml
+    curl -s "${URL}" -o docker-sync.yml
+    sed -i '' "s|MOUNT|${MOUNT_DIR}|" docker-sync.yml
+
     echo "#!/usr/bin/env bash" > start.sh
-    echo "echo \"version: '2'\" > docker-sync.yml" >> start.sh
-    echo "echo \"syncs:\" >> docker-sync.yml" >> start.sh
-    echo "echo \"  "${volume}":\" >> docker-sync.yml" >> start.sh
-    echo "echo \"      src: '"${MOUNT_DIR}"'\" >> docker-sync.yml" >> start.sh
-    echo "echo \"      sync_excludes: ['Gemfile.lock', 'Gemfile', 'config.rb', '.sass-cache', 'sass', 'sass-cache', 'composer.json' , 'bower.json', 'Gruntfile*', 'bower_components', 'node_modules', '.gitignore', '.git', '*.coffee', '*.scss', '*.sass']\"  >> docker-sync.yml" >> start.sh
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
-    echo "docker volume create ${volume}" >> start.sh
     echo "docker-sync clean" >> start.sh
     echo "docker-sync start" >> start.sh
     echo "docker run -w /home/workspace -v ${volume}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash" >> start.sh
