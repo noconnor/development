@@ -16,6 +16,8 @@ function check_target(){
     case ${TARGET} in
         react)
             ;;
+        robot)
+            ;;
         *)
             INFO+="Unexpected target profile: ${TARGET}"
             exit 1;
@@ -23,20 +25,20 @@ function check_target(){
 }
 
 function info(){
-    echo "${INFO}"
+    echo -e "${INFO}"
 }
 
 function docker_setup(){
-    [ "${OS}" == "Darwin" ] && docker_setup_macosx
-    [ "${OS}" == "Linux" ] && docker_setup_linux
+    [[ "${OS}" == "Darwin" ]] && docker_setup_macosx
+    [[ "${OS}" == "Linux" ]] && docker_setup_linux
 }
 
 function docker_setup_linux() {
     docker --version
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
       echo "Docker is not installed, installing now..."
       sudo yum --enablerepo=extras install -y docker
-      [ $? -ne 0 ] && { INFO+="ERROR: Docker install failed, exiting!\n"; exit 1; }
+      [[ $? -ne 0 ]] && { INFO+="ERROR: Docker install failed, exiting!\n"; exit 1; }
       sudo groupadd docker
       sudo usermod -aG docker ${USER}
       INFO+="WARN: logout and back in again to run docker as a non-sudo users\n"
@@ -46,7 +48,7 @@ function docker_setup_linux() {
 
 function docker_setup_macosx() {
     docker --version
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         which brew || { INFO+="WARN: brew is required, see https://brew.sh/\n"; exit 1; }
         which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
         docker --version || { echo "Installing docker..."; brew install docker; [ $? -ne 0 ] && exit 1; }
@@ -55,13 +57,14 @@ function docker_setup_macosx() {
     fi
 
     docker-machine ls | grep default
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         echo "Creating default virtual machine..."
         docker-machine create --virtualbox-cpu-count ${CPUS} --virtualbox-memory ${RAM} --driver virtualbox default
     fi
     eval "$(docker-machine env default)"
 
     # work around for slow filesystem sync on mac osx
+    brew ls --versions ruby || { INFO+="You may want to install ruby using brew, see README for instructions"; }
     which docker-sync || { echo "Installing docker-sync..."; gem install docker-sync; [ $? -ne 0 ] && exit 1; }
 
 }
@@ -70,7 +73,7 @@ function download_docker_file() {
     echo "Looking for ${DOCKER_FILE_NAME} at ${DOCKER_ROOT} ..."
     URL=${DOCKER_ROOT}${DOCKER_FILE_NAME}
     if ( curl -o/dev/null -sfI "${URL}" ); then
-        [ -f Dockerfile ] && rm Dockerfile
+        [[ -f Dockerfile ]] && rm Dockerfile
         curl "${URL}" -o Dockerfile
         echo "Docker file downloaded!"
     else
@@ -94,15 +97,12 @@ function generate_start_script_macosx() {
 
     local volume=shared
     # setup docker sync
-    echo "version: \"2\"" > docker-sync.yml
-    echo "syncs:" >> docker-sync.yml
-    echo "  ${volume}:" >> docker-sync.yml
-    echo "      src: '"${MOUNT_DIR}"'" >> docker-sync.yml
-    echo "      sync_excludes: ['Gemfile.lock', 'Gemfile', 'config.rb', '.sass-cache', 'sass', 'sass-cache', 'composer.json' , 'bower.json', 'Gruntfile*', 'bower_components', 'node_modules', '.gitignore', '.git', '*.coffee', '*.scss', '*.sass']"  >> docker-sync.yml
-
-
-    # setup start script
     echo "#!/usr/bin/env bash" > start.sh
+    echo "echo \"version: '2'\" > docker-sync.yml" >> start.sh
+    echo "echo \"syncs:\" >> docker-sync.yml" >> start.sh
+    echo "echo \"  "${volume}":\" >> docker-sync.yml" >> start.sh
+    echo "echo \"      src: '"${MOUNT_DIR}"'\" >> docker-sync.yml" >> start.sh
+    echo "echo \"      sync_excludes: ['Gemfile.lock', 'Gemfile', 'config.rb', '.sass-cache', 'sass', 'sass-cache', 'composer.json' , 'bower.json', 'Gruntfile*', 'bower_components', 'node_modules', '.gitignore', '.git', '*.coffee', '*.scss', '*.sass']\"  >> docker-sync.yml" >> start.sh
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
     echo "docker volume create ${volume}" >> start.sh
     echo "docker-sync clean" >> start.sh
@@ -120,14 +120,14 @@ function generate_start_script_linux(){
 
 function launch_docker_environment() {
 
-    [ ${OS} == "Darwin" ] && generate_start_script_macosx
-    [ ${OS} == "Linux" ]  && generate_start_script_linux
+    [[ ${OS} == "Darwin" ]] && generate_start_script_macosx
+    [[ ${OS} == "Linux" ]]  && generate_start_script_linux
 
     chmod +x start.sh
 
     echo "To start env manually run: ./start.sh"
     (tty -s)
-    [ $? -eq 0 ] && { echo "Launching docker ..."; ./start.sh; }
+    [[ $? -eq 0 ]] && { echo "Launching docker ..."; ./start.sh; }
 }
 
 trap info EXIT
