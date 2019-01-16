@@ -1,5 +1,5 @@
 version: '2'
 syncs:
-  shared:
+  TARGET-sync:
       src: 'MOUNT'
       sync_excludes: ['Gemfile.lock', 'Gemfile', 'config.rb', '.sass-cache', 'sass', 'sass-cache', 'composer.json' , 'bower.json', 'Gruntfile*', 'bower_components', 'node_modules', '.gitignore', '.git', '*.coffee', '*.scss', '*.sass']
