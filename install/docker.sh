@@ -68,7 +68,7 @@ function docker_setup_macosx() {
     eval "$(docker-machine env default)"
 
     # work around for slow filesystem sync on mac osx
-    brew ls --versions ruby || { log "You may want to install ruby using brew, see README for instructions"; }
+    brew ls --versions ruby || { log "WARN: You may want to install ruby using brew"; }
     if ! which docker-sync > /dev/null; then
         echo "Installing docker-sync...";
         brew install unison
@@ -87,7 +87,7 @@ function download_docker_file() {
         curl "${URL}" -o Dockerfile
         echo "Docker file downloaded!"
     else
-       log "Target (${URL}) not found" && exit 1
+       log "ERROR: Target (${URL}) not found" && exit 1
     fi
 }
 

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/Vagrantfile
 TARGET=${1}
+VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${TARGET}.Vagrantfile
 INFO=""
+OS=$(uname -s)
 
 function log(){
     INFO="${INFO}\n${1}"
@@ -13,9 +14,14 @@ function info(){
 }
 
 function vagrant_setup(){
+    [[ "${OS}" == "Darwin" ]] && vagrant_setup_macosx
+}
+
+function vagrant_setup_macosx(){
     which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
     which vagrant || { echo "Installing vagrant..."; brew cask install vagrant; [ $? -ne 0 ] && exit 1; }
     brew cask list vagrant-manager || { echo "Installing vagrant-manager..."; brew cask install vagrant-manager; [ $? -ne 0 ] && exit 1; }
+    (vagrant plugin list | grep vagrant-bindfs) || { echo "Installing vagrant-bindfs..."; vagrant plugin install vagrant-bindfs; [ $? -ne 0 ] && exit 1; }
 }
 
 function download_vagrant_file(){
@@ -25,14 +31,13 @@ function download_vagrant_file(){
         curl "${VAGRANT_FILE}" -o Vagrantfile
         echo "Vagrant file downloaded!"
     else
-       log "Target (${VAGRANT_FILE}) not found" && exit 1
+       log "ERROR: Target (${VAGRANT_FILE}) not found" && exit 1
     fi
 }
 
 function initialise_environment(){
     vagrant up
-    vagrant ssh -c "cd /vagrant && curl -o- https://raw.githubusercontent.com/noconnor/development/master/install.sh | bash -s ${TARGET}"
-    log "Access vm by running: vagrant ssh"
+    log "INFO: Access vm by running: vagrant ssh"
 }
 
 trap info EXIT

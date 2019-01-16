@@ -11,16 +11,16 @@ Development environment setup scripts
 
 <br />
 
-## Usage: Docker only
+## Usage: Docker
 
 Choose a target development environment (see [Environments](#environments) above) and execute the follow command
 
 ```
 # replace <TARGET> with actual target env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install.sh | bash -s <TARGET>
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s <TARGET>
 
-# i.e. to install a robotframework dev env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install.sh | bash -s robot
+# i.e. to install a robotframework docker dev env
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s robot
 ```
 
 
@@ -41,33 +41,24 @@ This mounted path will be kept in sync with the host environment (for Mac OSX se
 <br /> 
 
 
-## Usage: Vagrant with Docker
+## Usage: Vagrant
 
-To install a target docker container with in a VM to completely isolate your development environment execute the following:
+To pre-provisioned vagrant manager vm, choose a target environment and run:  
 
 ```
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install-with-vagrant.sh | bash -s <TARGET>
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/vagrant.sh | bash -s <TARGET>
 
 # i.e. to install a react dev env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install-with-vagrant.sh | bash -s react
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/vagrant.sh | bash -s react
 
 ```
 
 This script will:
 
 * Install `vagrant`
-* Install a docker development environment within this VM (see [Docker usage above](#usage:-docker-only))
+* Download a `Vagrantfile` for the target development environment (see [vagrant](vagrant/) directory)
+* Provision a vagrant managed box with target development environment installed
 
-The current directory will be mounted inside the vagrant VM 
+The directory in which the install command was executed will be mounted inside the vagrant VM 
 
 <br />
-
-### Installing ruby with brew
-```
-brew install ruby
-
-# add the following to ~/.bash_profile
-eval "$(rbenv init -)" >> ~/.bash_profile
-export PATH="/usr/local/opt/ruby/bin:$PATH" >> ~/.bash_profile
-export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:$PATH"
-```
