@@ -24,6 +24,10 @@ function check_target(){
      esac
 }
 
+function log(){
+    INFO+="${1}\n"
+}
+
 function info(){
     echo -e "${INFO}"
 }
@@ -38,18 +42,18 @@ function docker_setup_linux() {
     if [[ $? -ne 0 ]]; then
       echo "Docker is not installed, installing now..."
       sudo yum --enablerepo=extras install -y docker
-      [[ $? -ne 0 ]] && { INFO+="ERROR: Docker install failed, exiting!\n"; exit 1; }
+      [[ $? -ne 0 ]] && { log "ERROR: Docker install failed, exiting!"; exit 1; }
       sudo groupadd docker
       sudo usermod -aG docker ${USER}
-      INFO+="WARN: logout and back in again to run docker as a non-sudo users\n"
+      log "WARN: logout and back in again to run docker as a non-sudo users"
     fi
-    sudo systemctl restart docker || { INFO+="ERROR: unable to start docker systemctl process\n"; exit 1; }
+    sudo systemctl restart docker || { log "ERROR: unable to start docker systemctl process"; exit 1; }
 }
 
 function docker_setup_macosx() {
     docker --version
     if [[ $? -ne 0 ]]; then
-        which brew || { INFO+="WARN: brew is required, see https://brew.sh/\n"; exit 1; }
+        which brew || { log "WARN: brew is required, see https://brew.sh/"; exit 1; }
         which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
         docker --version || { echo "Installing docker..."; brew install docker; [ $? -ne 0 ] && exit 1; }
         docker --version || { echo "Re-installing docker..."; brew reinstall docker; [ $? -ne 0 ] && exit 1; }
@@ -64,8 +68,14 @@ function docker_setup_macosx() {
     eval "$(docker-machine env default)"
 
     # work around for slow filesystem sync on mac osx
-    brew ls --versions ruby || { INFO+="You may want to install ruby using brew, see README for instructions"; }
-    which docker-sync || { echo "Installing docker-sync..."; gem install docker-sync; [ $? -ne 0 ] && exit 1; }
+    brew ls --versions ruby || { log "You may want to install ruby using brew, see README for instructions"; }
+    if ! which docker-sync > /dev/null; then
+        echo "Installing docker-sync...";
+        brew install unison
+        brew install eugenmayer/dockersync/unox
+        gem install docker-sync
+        [ $? -ne 0 ] && log "WARN: docker-sync install failed, see http://docker-sync.io/"
+    fi
 
 }
 
@@ -77,7 +87,7 @@ function download_docker_file() {
         curl "${URL}" -o Dockerfile
         echo "Docker file downloaded!"
     else
-       INFO+="Target (${URL}) not found\n" && exit 1
+       log "Target (${URL}) not found" && exit 1
     fi
 }
 
@@ -90,24 +100,25 @@ function generate_docker_port_mappings() {
 function generate_start_script_macosx() {
 
     if [[ "${MOUNT_DIR}" != ${HOME}* ]]; then
-        INFO+="WARN: \"VirtualBox Shared Folder\" permissions required to mount an non ${HOME} directory\n"
+        log "WARN: \"VirtualBox Shared Folder\" permissions required to mount an non ${HOME} directory"
     fi
 
     docker build --tag=${TARGET} - < Dockerfile
 
-    local volume=shared
+    local volume=${TARGET}-sync
     # setup docker sync
     URL=${DOCKER_ROOT}docker-sync.yml
     curl -s "${URL}" -o docker-sync.yml
     sed -i '' "s|MOUNT|${MOUNT_DIR}|" docker-sync.yml
+    sed -i '' "s|TARGET|${TARGET}|" docker-sync.yml
 
     echo "#!/usr/bin/env bash" > start.sh
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
-    echo "docker-sync clean" >> start.sh
-    echo "docker-sync start" >> start.sh
+    echo "(which docker-sync > /dev/null) || { echo \"WARN: docker-sync is not installed, filesystem syncing will not work\"; }" >> start.sh
+    echo "(which docker-sync > /dev/null) && { docker-sync clean; docker-sync start; }" >> start.sh
     echo "docker run -w /home/workspace -v ${volume}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash" >> start.sh
 
-    INFO+="INFO: To force a filesystem sync run: docker-sync sync"
+    log "INFO: To force a filesystem sync run: docker-sync sync"
 }
 
 function generate_start_script_linux(){
