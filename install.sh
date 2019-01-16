@@ -2,7 +2,7 @@
 
 DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker/
 TARGET=${1}
-DOCKER_FILE_NAME=Dockerfile.${1}
+DOCKER_FILE_NAME=${1}.Dockerfile
 EXPOSE_PORTS=
 DOCKER_PORT_MAPPING=
 OS=$(uname -s)
