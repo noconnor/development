@@ -124,7 +124,7 @@ function generate_start_script_macosx() {
 function generate_start_script_linux(){
     sg docker -c "docker build --tag=${TARGET} ."
     echo "#!/usr/bin/env bash" > start.sh
-    echo "sg docker -c \"docker run -v ${MOUNT_DIR}:/home/workspace -w /home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash\"" >> start.sh
+    echo "sg docker -c \"docker run -v ${MOUNT_DIR}:/home/workspace:z -w /home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash\"" >> start.sh
 }
 
 function launch_docker_environment() {
