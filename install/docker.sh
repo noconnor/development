@@ -116,9 +116,10 @@ function generate_start_script_macosx() {
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
     echo "(which docker-sync > /dev/null) || { echo \"WARN: docker-sync is not installed, filesystem syncing will not work\"; }" >> start.sh
     echo "(which docker-sync > /dev/null) && { docker-sync clean; docker-sync start; }" >> start.sh
+    echo "(which docker-sync > /dev/null) && { docker-sync clean; docker-sync start; }" >> start.sh
     echo "docker run -w /home/workspace -v ${volume}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash" >> start.sh
 
-    log "INFO: To force a filesystem sync run: docker-sync sync"
+    (which docker-sync > /dev/null) && log "INFO: To force a filesystem sync run: docker-sync sync"
 }
 
 function generate_start_script_linux(){
