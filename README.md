@@ -11,7 +11,7 @@ Development environment setup scripts
 
 <br />
 
-## Usage
+## Usage: Docker only
 
 Choose a target development environment (see [Environments](#environments) above) and execute the follow command
 
@@ -39,6 +39,28 @@ and an interactive shell session will be started.
 This mounted path will be kept in sync with the host environment (for Mac OSX see generated `docker-sync.yml` file for sync details).
 
 <br /> 
+
+
+## Usage: Vagrant with Docker
+
+To install a target docker container with in a VM to completely isolate your development environment execute the following:
+
+```
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install-with-vagrant.sh | bash -s <TARGET>
+
+# i.e. to install a react dev env
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install-with-vagrant.sh | bash -s react
+
+```
+
+This script will:
+
+* Install `vagrant`
+* Install a docker development environment within this VM (see [Docker usage above](#usage:-docker-only))
+
+The current directory will be mounted inside the vagrant VM 
+
+<br />
 
 ### Installing ruby with brew
 ```

@@ -25,7 +25,7 @@ function check_target(){
 }
 
 function log(){
-    INFO+="${1}\n"
+    INFO="${INFO}\n${1}"
 }
 
 function info(){
