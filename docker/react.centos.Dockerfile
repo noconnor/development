@@ -16,3 +16,5 @@ RUN pip install awscli --upgrade --user
 RUN echo 'export PATH=${PATH}:${HOME}/.local/bin/' >> ~/.bashrc
 
 EXPOSE 8080 8081 8082 9229 80 3000
+
+RUN yum clean

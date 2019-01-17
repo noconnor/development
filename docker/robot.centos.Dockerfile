@@ -19,3 +19,5 @@ RUN source /root/.bashrc && pyenv install 3.7.0
 RUN echo '3.7.0' >> /root/.pyenv/version
 RUN source /root/.bashrc && pip install --upgrade pip
 RUN source /root/.bashrc && pip install robotframework
+
+RUN yum clean
