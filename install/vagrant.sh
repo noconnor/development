@@ -14,6 +14,10 @@ function info(){
     echo -e "${INFO}"
 }
 
+function check_target(){
+    ( curl -o/dev/null -sfI "${VAGRANT_FILE}" ) || { log "ERROR: Target (${VAGRANT_FILE}) not found"; exit 1; }
+}
+
 function vagrant_setup(){
     [[ "${OS}" == "Darwin" ]] && vagrant_setup_macosx
 }
@@ -43,6 +47,7 @@ function initialise_environment(){
 
 trap info EXIT
 
+check_target
 vagrant_setup
 download_vagrant_file
 initialise_environment

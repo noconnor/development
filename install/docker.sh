@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker/
 TARGET_ENV=${1}
 TARGET_OS=${2:-centos}
+
 DOCKER_FILE_NAME=${TARGET_ENV}.${TARGET_OS}.Dockerfile
+DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker/
+DOCKER_URL=${DOCKER_ROOT}${DOCKER_FILE_NAME}
 EXPOSE_PORTS=
 DOCKER_PORT_MAPPING=
 OS=$(uname -s)
@@ -12,16 +14,7 @@ INFO=""
 RAM=4096
 
 function check_target(){
-    # add switch
-    case ${TARGET_ENV} in
-        react)
-            ;;
-        robot)
-            ;;
-        *)
-            INFO+="Unexpected target profile: ${TARGET_ENV}"
-            exit 1;
-     esac
+    ( curl -o/dev/null -sfI "${DOCKER_URL}" ) || { log "ERROR: Target (${DOCKER_URL}) not found"; exit 1; }
 }
 
 function log(){
@@ -81,14 +74,13 @@ function docker_setup_macosx() {
 }
 
 function download_docker_file() {
-    echo "Looking for ${DOCKER_FILE_NAME} at ${DOCKER_ROOT} ..."
-    URL=${DOCKER_ROOT}${DOCKER_FILE_NAME}
-    if ( curl -o/dev/null -sfI "${URL}" ); then
+    echo "Looking for ${DOCKER_URL} ..."
+    if ( curl -o/dev/null -sfI "${DOCKER_URL}" ); then
         [[ -f Dockerfile ]] && rm Dockerfile
-        curl "${URL}" -o Dockerfile
+        curl "${DOCKER_URL}" -o Dockerfile
         echo "Docker file downloaded!"
     else
-       log "ERROR: Target (${URL}) not found" && exit 1
+       log "ERROR: Target (${DOCKER_URL}) not found" && exit 1
     fi
 }
 
