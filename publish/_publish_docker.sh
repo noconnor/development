@@ -25,8 +25,9 @@ function cleanup(){
 }
 
 function package_image(){
-    [[ ${OS} == "Darwin" ]] && { eval "$(docker-machine env default)"; docker build --tag=${PREFIX} - < Dockerfile; }
-    [[ ${OS} == "Linux" ]] && sg docker -c "docker build --tag=${PREFIX} - < Dockerfile"
+    pwd
+    [[ ${OS} == "Darwin" ]] && { eval "$(docker-machine env default)"; docker build --tag=${PREFIX} .; }
+    [[ ${OS} == "Linux" ]] && sg docker -c "docker build --tag=${PREFIX} ."
 }
 
 function publish(){
