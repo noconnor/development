@@ -4,20 +4,7 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "centos/7"
-
-  config.vm.provision "shell", inline: <<-SHELL
-    yum -y update
-    curl -sL https://rpm.nodesource.com/setup_8.x | bash -
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-    yum install -y nodejs
-    yum install -y epel-release
-    yum install -y python-pip
-    echo 'alias ll="ls -al"' >> ~/.bashrc
-    pip install awscli --upgrade --user
-    echo 'export PATH=${PATH}:${HOME}/.local/bin/' >> ~/.bashrc
-    yum clean
-  SHELL
+  config.vm.box = "noconnorie/react.centos"
 
   config.ssh.forward_agent = true
   config.vm.network "private_network", ip: "192.168.50.4"
