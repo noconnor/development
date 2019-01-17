@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-TARGET=${1}
-VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${TARGET}.Vagrantfile
+TARGET_ENV=${1}
+TARGET_OS=${2:-centos}
+VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${TARGET_ENV}.${TARGET_OS}.Vagrantfile
 INFO=""
 OS=$(uname -s)
 

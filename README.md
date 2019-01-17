@@ -1,13 +1,25 @@
 # Development
 
-Development environment setup scripts
+Development environment setup scripts.
+
+* [Environments](#environments) - Available development environments
+* [Docker usage](#usage:-docker) - How to install a docker based development environment
+* [Vagrant usage](#usage:-vagrant) - How to install a vagrant based development environment
 
 <br />
 
 ## Environments
 
+Available development environments:
+
 * `react` - React application development environment containing `node 8`
 * `robot` - Development environment with `robotframework` and `python3` pre-installed
+
+
+Available OS's:
+
+* `centos` - Centos 7
+
 
 <br />
 
@@ -16,11 +28,11 @@ Development environment setup scripts
 Choose a target development environment (see [Environments](#environments) above) and execute the follow command
 
 ```
-# replace <TARGET> with actual target env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s <TARGET>
+# replace <TARGET_ENV> with actual target env and TARGET_OS with actual os
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s -- <TARGET_ENV> <TARGET_OS>
 
 # i.e. to install a robotframework docker dev env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s robot
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s -- robot centos
 ```
 
 
@@ -46,10 +58,10 @@ This mounted path will be kept in sync with the host environment (for Mac OSX se
 To pre-provisioned vagrant manager vm, choose a target environment and run:  
 
 ```
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/vagrant.sh | bash -s <TARGET>
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/vagrant.sh | bash -s -- <TARGET_ENV> <TARGET_OS>
 
-# i.e. to install a react dev env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/vagrant.sh | bash -s react
+# i.e. to install a react dev env running centos
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/vagrant.sh | bash -s -- react centos
 
 ```
 

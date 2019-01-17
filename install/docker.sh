@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 
 DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker/
-TARGET=${1}
-DOCKER_FILE_NAME=${1}.Dockerfile
+TARGET_ENV=${1}
+TARGET_OS=${2:-centos}
+DOCKER_FILE_NAME=${TARGET_ENV}.${TARGET_OS}.Dockerfile
 EXPOSE_PORTS=
 DOCKER_PORT_MAPPING=
 OS=$(uname -s)
 MOUNT_DIR=$(pwd)
 INFO=""
-CPUS=$(sysctl hw.logicalcpu | cut -d':' -f2)
 RAM=4096
 
 function check_target(){
     # add switch
-    case ${TARGET} in
+    case ${TARGET_ENV} in
         react)
             ;;
         robot)
             ;;
         *)
-            INFO+="Unexpected target profile: ${TARGET}"
+            INFO+="Unexpected target profile: ${TARGET_ENV}"
             exit 1;
      esac
 }
@@ -63,7 +63,8 @@ function docker_setup_macosx() {
     docker-machine ls | grep default
     if [[ $? -ne 0 ]]; then
         echo "Creating default virtual machine..."
-        docker-machine create --virtualbox-cpu-count ${CPUS} --virtualbox-memory ${RAM} --driver virtualbox default
+        cpu=$(sysctl hw.logicalcpu | cut -d':' -f2)
+        docker-machine create --virtualbox-cpu-count ${cpu} --virtualbox-memory ${RAM} --driver virtualbox default
     fi
     eval "$(docker-machine env default)"
 
@@ -97,34 +98,36 @@ function generate_docker_port_mappings() {
     for PORT in ${expose}; do DOCKER_PORT_MAPPING+="-p ${PORT}:${PORT} "; done
 }
 
+function build_image(){
+    [[ ${OS} == "Darwin" ]] && docker build --tag=${TARGET_ENV} - < Dockerfile
+    [[ ${OS} == "Linux" ]] && sg docker -c "docker build --tag=${TARGET_ENV} - < Dockerfile"
+}
+
 function generate_start_script_macosx() {
 
     if [[ "${MOUNT_DIR}" != ${HOME}* ]]; then
         log "WARN: \"VirtualBox Shared Folder\" permissions required to mount an non ${HOME} directory"
     fi
 
-    docker build --tag=${TARGET} - < Dockerfile
-
-    local volume=${TARGET}-sync
+    local volume=${TARGET_ENV}-sync
     # setup docker sync
     URL=${DOCKER_ROOT}docker-sync.yml
     curl -s "${URL}" -o docker-sync.yml
     sed -i '' "s|MOUNT|${MOUNT_DIR}|" docker-sync.yml
-    sed -i '' "s|TARGET|${TARGET}|" docker-sync.yml
+    sed -i '' "s|TARGET|${TARGET_ENV}|" docker-sync.yml
 
     echo "#!/usr/bin/env bash" > start.sh
     echo "eval \"\$(docker-machine env default)\"" >> start.sh
     echo "(which docker-sync > /dev/null) || { echo \"WARN: docker-sync is not installed, filesystem syncing will not work\"; }" >> start.sh
     echo "(which docker-sync > /dev/null) && { docker-sync clean; docker-sync start; }" >> start.sh
-    echo "docker run -w /home/workspace -v ${volume}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash" >> start.sh
+    echo "docker run -w /home/workspace -v ${volume}:/home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET_ENV} bash" >> start.sh
 
     (which docker-sync > /dev/null) && log "INFO: To force a filesystem sync run: docker-sync sync"
 }
 
 function generate_start_script_linux(){
-    sg docker -c "docker build --tag=${TARGET} ."
     echo "#!/usr/bin/env bash" > start.sh
-    echo "sg docker -c \"docker run -v ${MOUNT_DIR}:/home/workspace:z -w /home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET} bash\"" >> start.sh
+    echo "sg docker -c \"docker run -v ${MOUNT_DIR}:/home/workspace:z -w /home/workspace ${DOCKER_PORT_MAPPING} -it ${TARGET_ENV} bash\"" >> start.sh
 }
 
 function launch_docker_environment() {
@@ -145,4 +148,5 @@ check_target
 docker_setup
 download_docker_file
 generate_docker_port_mappings
+build_image
 launch_docker_environment
