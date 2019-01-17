@@ -59,6 +59,11 @@ function docker_setup_macosx() {
         cpu=$(sysctl hw.logicalcpu | cut -d':' -f2)
         docker-machine create --virtualbox-cpu-count ${cpu} --virtualbox-memory ${RAM} --driver virtualbox default
     fi
+
+    if ! (docker-machine ls | grep default | grep Running); then
+        ( docker-machine start ) || { log "Error: Unable to start default docker machine"; exit 1; }
+    fi
+
     eval "$(docker-machine env default)"
 
     # work around for slow filesystem sync on mac osx
