@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
     echo '3.7.0' >> /root/.pyenv/version
     source /root/.bashrc && pip install --upgrade pip
     source /root/.bashrc && pip install robotframework
+    yum clean
   SHELL
 
   config.ssh.forward_agent = true

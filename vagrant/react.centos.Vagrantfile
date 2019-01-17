@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
     echo 'alias ll="ls -al"' >> ~/.bashrc
     pip install awscli --upgrade --user
     echo 'export PATH=${PATH}:${HOME}/.local/bin/' >> ~/.bashrc
+    yum clean
   SHELL
 
   config.ssh.forward_agent = true
