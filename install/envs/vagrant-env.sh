@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
+# User input
 TARGET_ENV=${1}
-TARGET_OS=${2:-centos}
+TARGET_OS=${2}
+
+
+
+# Defaults
 VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${TARGET_ENV}.${TARGET_OS}.Vagrantfile
 INFO=""
 OS=$(uname -s)
@@ -32,6 +37,7 @@ function download_vagrant_file(){
 function initialise_environment(){
     vagrant up
     log "INFO: Access vm by running: vagrant ssh"
+    log "INFO: Destroy vm by running: vagrant destroy"
 }
 
 trap info EXIT

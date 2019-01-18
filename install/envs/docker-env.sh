@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 TARGET_ENV=${1}
-TARGET_OS=${2:-centos}
+TARGET_OS=${2}
 
+
+# Defaults
 DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/docker/
 DOCKER_REPO=${DOCKER_REPO:-noconnorie}
 DOCKER_IMAGE=${DOCKER_IMAGE:-"${DOCKER_REPO}/${TARGET_ENV}.${TARGET_OS}"}
