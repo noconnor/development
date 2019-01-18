@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-IMAGE=${1} # i.e. react.centos
-IMAGE_NO_REPO=$( echo ${IMAGE} | cut -d'/' -f2-)
+IMAGE=${1} # i.e.  noconnorie/react.centos
+IMAGE_NO_REPO=$( echo ${IMAGE} | cut -d'/' -f2-) # i.e. react.centos
 
 # defaults
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
