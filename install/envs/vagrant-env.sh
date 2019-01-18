@@ -2,9 +2,11 @@
 
 # User input
 IMAGE=${1}
+IMAGE_NO_REPO=$( echo ${IMAGE} | cut -d'/' -f2-)
 
 # Defaults
-VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${IMAGE}.Vagrantfile
+VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${IMAGE_NO_REPO}.Vagrantfile
+VAGRANT_DEFAULT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/default.Vagrantfile
 INFO=""
 OS=$(uname -s)
 
@@ -17,7 +19,7 @@ function info(){
 }
 
 function check_target(){
-    ( curl -o/dev/null -sfI "${VAGRANT_FILE}" ) || { log "ERROR: Target (${VAGRANT_FILE}) not found"; exit 1; }
+    ( curl -o/dev/null -sfI "${VAGRANT_FILE}" ) || { log "WARN: Target (${VAGRANT_FILE}) not found, using default"; VAGRANT_FILE=${VAGRANT_DEFAULT_FILE}; }
 }
 
 function download_vagrant_file(){
@@ -25,6 +27,7 @@ function download_vagrant_file(){
     if ( curl -o/dev/null -sfI "${VAGRANT_FILE}" ); then
         [[ -f Dockerfile ]] && rm Vagrantfile
         curl "${VAGRANT_FILE}" -o Vagrantfile
+        sed -i'' 's|IMAGE|'${IMAGE}'|g' Vagrantfile
         echo "Vagrant file downloaded!"
     else
        log "ERROR: Target (${VAGRANT_FILE}) not found" && exit 1

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 IMAGE=${1} # i.e. react.centos
+IMAGE_NO_REPO=$( echo ${IMAGE} | cut -d'/' -f2-)
 
 # defaults
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PROVISIONERS_DIR="${DIR}/../provisioners"
 TEMPLATES_DIR="${DIR}/../templates"
-DOCKER_USER=${DOCKER_USER:-noconnorie}
 DOCKER_IMG_VERSION=${DOCKER_IMG_VERSION:-latest}
-BOOTSTRAP=${PROVISIONERS_DIR}/${IMAGE}.provision.sh
+BOOTSTRAP=${PROVISIONERS_DIR}/${IMAGE_NO_REPO}.provision.sh
 DOCKER_BASE=${TEMPLATES_DIR}/base.Dockerfile
 OS=$(uname -s)
 
@@ -51,8 +51,8 @@ function package_image_linux(){
 function publish(){
     echo "publishing..."
     docker login
-    docker tag ${IMAGE} ${DOCKER_USER}/${IMAGE}:${DOCKER_IMG_VERSION}
-    docker push ${DOCKER_USER}/${IMAGE}:${DOCKER_IMG_VERSION}
+    docker tag ${IMAGE} ${IMAGE}:${DOCKER_IMG_VERSION}
+    docker push ${IMAGE}:${DOCKER_IMG_VERSION}
     docker image rm ${IMAGE}
 }
 

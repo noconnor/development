@@ -11,17 +11,17 @@ The following table describes the available publish script options:
 | Configuration           | Description                                                                                                                                                                                                                                                                                                                                                                               | Default |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
 | `--runtime`      | Currently supported runtime's are `vagrant` or `docker`.<br />If `docker` is specified a `docker` container will be published.<br />If `vagrant` is chosen, a new vagrant vm will be built and published  | vagrant |
-| `--image`        | The image you would like to build and publish.<br />This image should match a script in the [provisioners directory](provisioners/)                                                                       | None    |
+| `--image`        | The image you would like to build and publish.<br />This image should match a script in the [provisioners directory](provisioners/) (*NOTE: repo will be stripped from image name*)                       | None    |
 
 <br />
 
 **Example Usage:**
 ```
 # Build and publish a docker container based on the provision script provisioners/python3.centos.provision.sh
-./publish --runtime docker --image python3.centos
+./publish --runtime docker --image noconnorie/python3.centos
 
 # Build and publish a vagrant vm based on the provision script provisioners/react.centos.provision.sh
-./publish --runtime vagrant --image react.centos
+./publish --runtime vagrant --image noconnorie/react.centos
 
 ```
 
