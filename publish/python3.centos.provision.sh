@@ -22,4 +22,4 @@ echo 'eval "$(pyenv virtualenv-init -)"' >> /root/.bashrc
 echo '3.7.0' >> /root/.pyenv/version
 source /root/.bashrc && pyenv install 3.7.0
 source /root/.bashrc && pip install --upgrade pip
-source /root/.bashrc && pip install robotframework
+

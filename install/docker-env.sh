@@ -41,8 +41,6 @@ function generate_start_script_macosx() {
     echo "(which docker-sync > /dev/null) && { docker-sync clean; docker-sync start; }" >> start.sh
     echo "docker run -w /home/workspace -v ${volume}:/home/workspace -P -it ${DOCKER_IMAGE} bash" >> start.sh
     echo "(which docker-sync > /dev/null) && { docker-sync stop; }" >> start.sh
-
-    (which docker-sync > /dev/null) && log "INFO: To force a filesystem sync run: docker-sync sync"
 }
 
 function generate_start_script_linux(){

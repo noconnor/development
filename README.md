@@ -13,7 +13,7 @@ Development environment setup scripts.
 Available development environments:
 
 * `react` - React application development environment containing `node 8`
-* `robot` - Development environment with `robotframework` and `python3` pre-installed
+* `python3` - Development environment with `python3` pre-installed
 
 
 Available OS's:
@@ -31,8 +31,8 @@ Choose a target development environment (see [Environments](#environments) above
 # replace <TARGET_ENV> with actual target env and TARGET_OS with actual os
 curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s -- <TARGET_ENV> <TARGET_OS>
 
-# i.e. to install a robotframework docker dev env
-curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s -- robot centos
+# i.e. to install a python3 centos docker dev env
+curl -o- https://raw.githubusercontent.com/noconnor/development/master/install/docker.sh | bash -s -- python3 centos
 ```
 
 
