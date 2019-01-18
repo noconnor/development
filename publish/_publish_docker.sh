@@ -6,6 +6,10 @@ PREFIX=${TARGET_ENV}.${TARGET_OS}
 BOOTSTRAP=${PREFIX}.provision.sh
 OS=$(uname -s)
 
+# defaults
+DOCKER_USER=${DOCKER_USER:-noconnorie}
+DOCKER_IMG_VERSION=${DOCKER_IMG_VERSION:-1}
+
 function check_args(){
     [ ! -f ${BOOTSTRAP} ] && { echo "${BOOTSTRAP} does not exist, bailing!"; exit 1; }
 }
@@ -25,16 +29,18 @@ function cleanup(){
 }
 
 function package_image(){
-    pwd
     [[ ${OS} == "Darwin" ]] && { eval "$(docker-machine env default)"; docker build --tag=${PREFIX} .; }
     [[ ${OS} == "Linux" ]] && sg docker -c "docker build --tag=${PREFIX} ."
 }
 
 function publish(){
     echo "publishing..."
+    docker login
+    docker tag ${PREFIX} ${DOCKER_USER}/${PREFIX}:${DOCKER_IMG_VERSION}
+    docker push ${DOCKER_USER}/${PREFIX}:${DOCKER_IMG_VERSION}
 }
 
-#trap cleanup EXIT
+trap cleanup EXIT
 (
     check_args
     initialise

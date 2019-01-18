@@ -2,6 +2,11 @@
 
 # VAGRANT_BASE-centos/7
 # DOCKER_BASE-centos:centos7
+# DOCS-https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7
+
+yum -y update
+yum -y install yum-utils
+yum -y groupinstall development
 
 yum -y install epel-release
 yum install -y git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel
