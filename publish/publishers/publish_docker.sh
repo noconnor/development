@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 
-TARGET_ENV=${1}
-TARGET_OS=${2:-centos}
-PREFIX=${TARGET_ENV}.${TARGET_OS}
-BOOTSTRAP=${PREFIX}.provision.sh
-OS=$(uname -s)
+IMAGE=${1} # i.e. react.centos
 
 # defaults
+PROVISIONERS_DIR="../provisioners"
+TEMPLATES_DIR="../templates"
 DOCKER_USER=${DOCKER_USER:-noconnorie}
 DOCKER_IMG_VERSION=${DOCKER_IMG_VERSION:-latest}
+BOOTSTRAP=${PROVISIONERS_DIR}/${IMAGE}.provision.sh
+DOCKER_BASE=${TEMPLATES_DIR}/base.Dockerfile
+OS=$(uname -s)
+
 
 function check_args(){
     [ ! -f ${BOOTSTRAP} ] && { echo "${BOOTSTRAP} does not exist, bailing!"; exit 1; }
@@ -18,7 +20,7 @@ function initialise(){
     echo "Initialising build dir..."
     [ ! -d tmp ] && mkdir tmp
     cp ${BOOTSTRAP} tmp/bootstrap.sh
-    cp base.Dockerfile tmp/Dockerfile
+    cp ${DOCKER_BASE} tmp/Dockerfile
     local base_box=$(grep DOCKER_BASE tmp/bootstrap.sh| sed 's|# DOCKER_BASE ||g')
     local expose=$(grep DOCKER_EXPOSE tmp/bootstrap.sh| sed 's|# DOCKER_EXPOSE ||g')
     sed -i '' 's|BASE_BOX|'${base_box}'|g' tmp/Dockerfile
@@ -37,20 +39,20 @@ function package_image(){
 
 function package_image_maxosx(){
     eval "$(docker-machine env default)"
-    ( docker build --tag=${PREFIX} . ) || { echo "ERROR: Docker build failed!"; exit 1; }
+    ( docker build --tag=${IMAGE} . ) || { echo "ERROR: Docker build failed!"; exit 1; }
 
 }
 
 function package_image_linux(){
-    ( sg docker -c "docker build --tag=${PREFIX} ." ) || { echo "ERROR: Docker build failed!"; exit 1; }
+    ( sg docker -c "docker build --tag=${IMAGE} ." ) || { echo "ERROR: Docker build failed!"; exit 1; }
 }
 
 function publish(){
     echo "publishing..."
     docker login
-    docker tag ${PREFIX} ${DOCKER_USER}/${PREFIX}:${DOCKER_IMG_VERSION}
-    docker push ${DOCKER_USER}/${PREFIX}:${DOCKER_IMG_VERSION}
-    docker image rm ${PREFIX}
+    docker tag ${IMAGE} ${DOCKER_USER}/${IMAGE}:${DOCKER_IMG_VERSION}
+    docker push ${DOCKER_USER}/${IMAGE}:${DOCKER_IMG_VERSION}
+    docker image rm ${IMAGE}
 }
 
 trap cleanup EXIT

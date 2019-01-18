@@ -10,7 +10,6 @@ ENVS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/
 
 # Defaults
 PROVIDER="vagrant"
-TARGET_OS="centos"
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -28,13 +27,8 @@ do
         shift # past argument
         shift # past value
         ;;
-        --env)
-        TARGET_ENV="$2"
-        shift
-        shift
-        ;;
-        --os)
-        TARGET_OS="$2"
+        --image)
+        TARGET_IMAGE="$2"
         shift
         shift
         ;;
@@ -55,11 +49,11 @@ function install_framework(){
 }
 
 function install_environment() {
-    [ -z ${TARGET_ENV+} ] && { echo "No target environment specified, skipping"; return; }
+    [ -z ${TARGET_IMAGE+} ] && { echo "No target image specified, skipping"; return; }
     local provider_env_url="${ENVS_ROOT}/${PROVIDER}-env.sh"
     ( curl -o/dev/null -sfI "${provider_env_url}" ) || { log "ERROR: ${PROVIDER} install script not found"; exit 1; }
-    echo "Attempting to install ${TARGET_ENV} using ${PROVIDER}.."
-    curl -o- ${provider_env_url} | bash -s -- ${TARGET_ENV} ${TARGET_OS}
+    echo "Attempting to install ${TARGET_IMAGE} using ${PROVIDER}.."
+    curl -o- ${provider_env_url} | bash -s -- ${TARGET_IMAGE}
     [ $? -ne 0 ] && { echo "ERROR: environment install failed!"; exit 1; }
 }
 

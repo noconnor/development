@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
-TARGET_ENV=${1}
-TARGET_OS=${2:-centos}
-PREFIX=${TARGET_ENV}.${TARGET_OS}
-BOX_NAME=${PREFIX}.box
-BOOTSTRAP=${PREFIX}.provision.sh
+IMAGE=${1} # i.e. python3.centos
 
 # defaults
+PROVISIONERS_DIR="../provisioners"
+TEMPLATES_DIR="../templates"
+BOX_NAME=${IMAGE}.box
+BOOTSTRAP=${PROVISIONERS_DIR}/${IMAGE}.provision.sh
 VAGRANT_PROVIDER=${VAGRANT_PROVIDER:-virtualbox}
 VAGRANT_USER=${VAGRANT_USER:-noconnorie}
 VAGRANT_BOX_VERSION=${VAGRANT_BOX_VERSION:-1}
+VAGRANT_BASE=${TEMPLATES_DIR}/base.Vagrantfile
 
 function check_args(){
     [ ! -f ${BOOTSTRAP} ] && { echo "${BOOTSTRAP} does not exist, bailing!"; exit 1; }
@@ -19,7 +20,7 @@ function initialise(){
     echo "Initialising build dir..."
     [ ! -d tmp ] && mkdir tmp
     cp ${BOOTSTRAP} tmp/bootstrap.sh
-    cp base.Vagrantfile tmp/Vagrantfile
+    cp ${VAGRANT_BASE} tmp/Vagrantfile
     local base_box=$(grep VAGRANT_BASE tmp/bootstrap.sh| sed 's|# VAGRANT_BASE ||g')
     sed -i '' 's|BASE_BOX|'${base_box}'|g' tmp/Vagrantfile
     cd tmp
@@ -36,7 +37,7 @@ function package_box(){
 
 function publish(){
     vagrant cloud auth login
-    vagrant cloud publish ${VAGRANT_USER}/${PREFIX} \
+    vagrant cloud publish ${VAGRANT_USER}/${IMAGE} \
         ${VAGRANT_BOX_VERSION} \
         ${VAGRANT_PROVIDER} \
         "${BOX_NAME}" \

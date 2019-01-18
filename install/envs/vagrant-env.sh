@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 
 # User input
-TARGET_ENV=${1}
-TARGET_OS=${2}
-
-
+IMAGE=${1}
 
 # Defaults
-VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${TARGET_ENV}.${TARGET_OS}.Vagrantfile
+VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${IMAGE}.Vagrantfile
 INFO=""
 OS=$(uname -s)
 
