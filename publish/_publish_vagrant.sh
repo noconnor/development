@@ -20,7 +20,7 @@ function initialise(){
     [ ! -d tmp ] && mkdir tmp
     cp ${BOOTSTRAP} tmp/bootstrap.sh
     cp base.Vagrantfile tmp/Vagrantfile
-    local base_box=$(grep VAGRANT_BASE tmp/bootstrap.sh| cut -d'-' -f2)
+    local base_box=$(grep VAGRANT_BASE tmp/bootstrap.sh| sed 's|# VAGRANT_BASE ||g')
     sed -i '' 's|BASE_BOX|'${base_box}'|g' tmp/Vagrantfile
     cd tmp
 }

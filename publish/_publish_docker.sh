@@ -8,7 +8,7 @@ OS=$(uname -s)
 
 # defaults
 DOCKER_USER=${DOCKER_USER:-noconnorie}
-DOCKER_IMG_VERSION=${DOCKER_IMG_VERSION:-1}
+DOCKER_IMG_VERSION=${DOCKER_IMG_VERSION:-latest}
 
 function check_args(){
     [ ! -f ${BOOTSTRAP} ] && { echo "${BOOTSTRAP} does not exist, bailing!"; exit 1; }
@@ -19,8 +19,10 @@ function initialise(){
     [ ! -d tmp ] && mkdir tmp
     cp ${BOOTSTRAP} tmp/bootstrap.sh
     cp base.Dockerfile tmp/Dockerfile
-    local base_box=$(grep DOCKER_BASE tmp/bootstrap.sh| cut -d'-' -f2)
+    local base_box=$(grep DOCKER_BASE tmp/bootstrap.sh| sed 's|# DOCKER_BASE ||g')
+    local expose=$(grep DOCKER_EXPOSE tmp/bootstrap.sh| sed 's|# DOCKER_EXPOSE ||g')
     sed -i '' 's|BASE_BOX|'${base_box}'|g' tmp/Dockerfile
+    [ -z ${expose+} ] && echo "EXPOSE ${expose}" >> tmp/Dockerfile
     cd tmp
 }
 
@@ -38,6 +40,7 @@ function publish(){
     docker login
     docker tag ${PREFIX} ${DOCKER_USER}/${PREFIX}:${DOCKER_IMG_VERSION}
     docker push ${DOCKER_USER}/${PREFIX}:${DOCKER_IMG_VERSION}
+    docker image rm ${PREFIX}
 }
 
 trap cleanup EXIT

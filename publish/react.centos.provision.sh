@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# VAGRANT_BASE-centos/7
-# DOCKER_BASE-centos:centos7
+# VAGRANT_BASE centos/7
+# DOCKER_BASE centos:centos7
+# DOCKER_EXPOSE 8080 8081 8082 9229 80 3000
 
 yum -y update
 curl -sL https://rpm.nodesource.com/setup_8.x | bash -

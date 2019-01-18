@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# VAGRANT_BASE-centos/7
-# DOCKER_BASE-centos:centos7
+# VAGRANT_BASE centos/7
+# DOCKER_BASE centos:centos7
+# DOCKER_EXPOSE 8080
 # DOCS-https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7
 
 yum -y update
