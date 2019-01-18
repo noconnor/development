@@ -42,3 +42,5 @@ trap info EXIT
 check_target
 download_vagrant_file
 initialise_environment
+
+exit 0

@@ -69,3 +69,5 @@ trap info EXIT
 
 pull_docker_image
 generate_start_script
+
+exit 0
