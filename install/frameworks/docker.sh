@@ -73,3 +73,5 @@ function docker_setup_macosx() {
 trap info EXIT
 
 docker_setup
+
+exit 0

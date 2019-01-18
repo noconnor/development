@@ -5,7 +5,7 @@ function usage() {
 }
 
 # Sources
-FRAMEWORKS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/tools
+FRAMEWORKS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/frameworks
 ENVS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/envs
 
 # Defaults

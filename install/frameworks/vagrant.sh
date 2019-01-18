@@ -25,3 +25,5 @@ function vagrant_setup_macosx(){
 trap info EXIT
 
 vagrant_setup
+
+exit 0
