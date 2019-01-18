@@ -5,8 +5,8 @@ IMAGE=${1}
 IMAGE_NO_REPO=$( echo ${IMAGE} | cut -d'/' -f2-)
 
 # Defaults
-VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/${IMAGE_NO_REPO}.Vagrantfile
-VAGRANT_DEFAULT_FILE=https://raw.githubusercontent.com/noconnor/development/master/vagrant/default.Vagrantfile
+VAGRANT_FILE=https://raw.githubusercontent.com/noconnor/development/master/install/envs/vagrant/${IMAGE_NO_REPO}.Vagrantfile
+VAGRANT_DEFAULT_FILE=https://raw.githubusercontent.com/noconnor/development/master/install/envs/vagrant/default.Vagrantfile
 INFO=""
 OS=$(uname -s)
 
