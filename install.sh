@@ -37,7 +37,7 @@ do
         shift
         shift
         ;;
-        --image)
+        --help)
         usage
         ;;
         *)

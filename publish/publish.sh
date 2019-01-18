@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
 function usage(){
-    echo ""
+    echo "usage: $0 [--runtime runtime] [--image image]"
+    echo "  --runtime      runtime to use for specified --image (default: vagrant)"
+    echo "  --image        image to publish (can be a vagrant box or docker image)"
+    echo "  --help         display help"
+    exit 1
 }
 
 # Defaults
@@ -24,6 +28,9 @@ do
         TARGET_IMAGE="$2"
         shift
         shift
+        ;;
+        --help)
+        usage
         ;;
         *)
         POSITIONAL+=("$1") # save it in an array for later
