@@ -60,9 +60,7 @@ function generate_start_script() {
 
     chmod +x start.sh
 
-    echo "To start env manually run: ./start.sh"
-    (tty -s)
-    [[ $? -eq 0 ]] && { echo "Launching docker ..."; ./start.sh; }
+    log "INFO: To start env run: ./start.sh"
 }
 
 trap info EXIT

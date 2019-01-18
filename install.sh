@@ -5,11 +5,11 @@ function usage() {
 }
 
 # Sources
-FRAMEWORKS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/frameworks
+FRAMEWORKS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/runtimes
 ENVS_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/envs
 
 # Defaults
-PROVIDER="vagrant"
+RUNTIME="vagrant"
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -22,8 +22,8 @@ do
         shift # past argument
         shift # past value
         ;;
-        --provider)
-        PROVIDER="$2"
+        --runtime)
+        RUNTIME="$2"
         shift # past argument
         shift # past value
         ;;
@@ -41,7 +41,7 @@ done
 
 function install_framework(){
     [ -z ${FRAMEWORK+x} ] && return # nothing to do
-    local framework_url="${FRAMEWORKS_ROOT}/${FRAMEWORK}.sh"
+    local framework_url="${FRAMEWORKS_ROOT}/${FRAMEWORK}-install.sh"
     ( curl -o/dev/null -sfI "${framework_url}" ) || { echo "ERROR: ${FRAMEWORK} install script not found"; exit 1; }
     echo "Installing ${FRAMEWORK}.."
     curl -o- ${framework_url} | bash
@@ -50,10 +50,10 @@ function install_framework(){
 
 function install_environment() {
     [ -z ${TARGET_IMAGE+x} ] && return # nothing to do
-    local provider_env_url="${ENVS_ROOT}/${PROVIDER}-env.sh"
-    ( curl -o/dev/null -sfI "${provider_env_url}" ) || { echo "ERROR: ${PROVIDER} install script not found"; exit 1; }
-    echo "Attempting to install ${TARGET_IMAGE} using ${PROVIDER}.."
-    curl -o- ${provider_env_url} | bash -s -- ${TARGET_IMAGE}
+    local runtime_url="${ENVS_ROOT}/${RUNTIME}-env.sh"
+    ( curl -o/dev/null -sfI "${runtime_url}" ) || { echo "ERROR: ${RUNTIME} install script not found"; exit 1; }
+    echo "Attempting to install ${TARGET_IMAGE} using ${RUNTIME}.."
+    curl -o- ${runtime_url} | bash -s -- ${TARGET_IMAGE}
     [ $? -ne 0 ] && { echo "ERROR: environment install failed!"; exit 1; }
 }
 

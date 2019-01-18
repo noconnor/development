@@ -52,7 +52,7 @@ function docker_setup_macosx() {
     fi
 
     if ! (docker-machine ls | grep default | grep Running); then
-        ( docker-machine start ) || { log "Error: Unable to start default docker machine"; exit 1; }
+        ( docker-machine start ) || { log "ERROR: Unable to start default docker machine"; exit 1; }
     fi
 
     eval "$(docker-machine env default)"
