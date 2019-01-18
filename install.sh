@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 function usage() {
-    echo ""
+    echo "usage: $0 [--framework framework] [--runtime runtime] [--image image]"
+    echo "  --framework    framework to install (one of vagrant or docker)"
+    echo "  --runtime      runtime to use for specified --image (default: vagrant)"
+    echo "  --image        image to install (can be vagrant box or docker image)"
+    echo "  --help         display help"
+    exit 1
 }
 
 # Sources
@@ -31,6 +36,9 @@ do
         TARGET_IMAGE="$2"
         shift
         shift
+        ;;
+        --image)
+        usage
         ;;
         *)
         POSITIONAL+=("$1") # save it in an array for later
