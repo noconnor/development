@@ -27,7 +27,7 @@ function download_vagrant_file(){
     if ( curl -o/dev/null -sfI "${VAGRANT_FILE}" ); then
         [[ -f Dockerfile ]] && rm Vagrantfile
         curl "${VAGRANT_FILE}" -o Vagrantfile
-        sed -i'' 's|IMAGE|'${IMAGE}'|g' Vagrantfile
+        sed -i '' 's|IMAGE|'${IMAGE}'|g' Vagrantfile
         echo "Vagrant file downloaded!"
     else
        log "ERROR: Target (${VAGRANT_FILE}) not found" && exit 1
