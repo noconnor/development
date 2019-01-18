@@ -5,7 +5,7 @@ function usage(){
 }
 
 # Defaults
-PROVIDER="vagrant"
+RUNTIME="vagrant"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PUBLISHERS_DIR="${DIR}/publishers"
 
@@ -15,8 +15,8 @@ do
     key="$1"
 
     case ${key} in
-        --provider)
-        PROVIDER="$2"
+        --runtime)
+        RUNTIME="$2"
         shift # past argument
         shift # past value
         ;;
@@ -35,7 +35,7 @@ done
 [ -z ${TARGET_IMAGE+x} ] && { echo "Target image must be provided"; usage; exit 1; }
 
 function publish(){
-    local publish_script="${PUBLISHERS_DIR}/${PROVIDER}-publish.sh"
+    local publish_script="${PUBLISHERS_DIR}/${RUNTIME}-publish.sh"
     [ ! -f ${publish_script} ] && { echo "Could not find publish script (${publish_script})"; exit 1; }
     chmod +x ${publish_script}
     echo "Executing publish script ${publish_script}..."
