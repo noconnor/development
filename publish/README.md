@@ -27,7 +27,7 @@ The following table describes the available publish script options:
 
 <br />
 
-**Adding a new image/vm**
+## Adding a new docker image OR vagrant vm
 
 To add a new **docker** image:
 
