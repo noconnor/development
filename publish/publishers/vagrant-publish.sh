@@ -3,8 +3,9 @@
 IMAGE=${1} # i.e. python3.centos
 
 # defaults
-PROVISIONERS_DIR="../provisioners"
-TEMPLATES_DIR="../templates"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PROVISIONERS_DIR="${DIR}/../provisioners"
+TEMPLATES_DIR="${DIR}/../templates"
 BOX_NAME=${IMAGE}.box
 BOOTSTRAP=${PROVISIONERS_DIR}/${IMAGE}.provision.sh
 VAGRANT_PROVIDER=${VAGRANT_PROVIDER:-virtualbox}

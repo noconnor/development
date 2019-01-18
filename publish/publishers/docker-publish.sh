@@ -3,8 +3,9 @@
 IMAGE=${1} # i.e. react.centos
 
 # defaults
-PROVISIONERS_DIR="../provisioners"
-TEMPLATES_DIR="../templates"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PROVISIONERS_DIR="${DIR}/../provisioners"
+TEMPLATES_DIR="${DIR}/../templates"
 DOCKER_USER=${DOCKER_USER:-noconnorie}
 DOCKER_IMG_VERSION=${DOCKER_IMG_VERSION:-latest}
 BOOTSTRAP=${PROVISIONERS_DIR}/${IMAGE}.provision.sh
@@ -24,7 +25,7 @@ function initialise(){
     local base_box=$(grep DOCKER_BASE tmp/bootstrap.sh| sed 's|# DOCKER_BASE ||g')
     local expose=$(grep DOCKER_EXPOSE tmp/bootstrap.sh| sed 's|# DOCKER_EXPOSE ||g')
     sed -i '' 's|BASE_BOX|'${base_box}'|g' tmp/Dockerfile
-    [ -z ${expose+} ] && echo "EXPOSE ${expose}" >> tmp/Dockerfile
+    [ -z ${expose+x} ] && echo "EXPOSE ${expose}" >> tmp/Dockerfile
     cd tmp
 }
 

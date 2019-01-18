@@ -40,7 +40,7 @@ do
 done
 
 function install_framework(){
-    [ -z ${FRAMEWORK+} ] && return # nothing to do
+    [ -z ${FRAMEWORK+x} ] && return # nothing to do
     local framework_url="${FRAMEWORKS_ROOT}/${FRAMEWORK}.sh"
     ( curl -o/dev/null -sfI "${framework_url}" ) || { log "ERROR: ${FRAMEWORK} install script not found"; exit 1; }
     echo "Installing ${FRAMEWORK}.."
@@ -49,7 +49,7 @@ function install_framework(){
 }
 
 function install_environment() {
-    [ -z ${TARGET_IMAGE+} ] && { echo "No target image specified, skipping"; return; }
+    [ -z ${TARGET_IMAGE+x} ] && { echo "No target image specified, skipping"; return; }
     local provider_env_url="${ENVS_ROOT}/${PROVIDER}-env.sh"
     ( curl -o/dev/null -sfI "${provider_env_url}" ) || { log "ERROR: ${PROVIDER} install script not found"; exit 1; }
     echo "Attempting to install ${TARGET_IMAGE} using ${PROVIDER}.."

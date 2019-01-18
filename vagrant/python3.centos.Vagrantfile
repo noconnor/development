@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     v.cpus = 4
   end
 
-  config.vm.network "forwarded_port", guest: 80, host: 80
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder ".", "/vagrant-nfs", type: :nfs
