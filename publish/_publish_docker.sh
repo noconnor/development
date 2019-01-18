@@ -31,8 +31,18 @@ function cleanup(){
 }
 
 function package_image(){
-    [[ ${OS} == "Darwin" ]] && { eval "$(docker-machine env default)"; docker build --tag=${PREFIX} .; }
-    [[ ${OS} == "Linux" ]] && sg docker -c "docker build --tag=${PREFIX} ."
+    [[ ${OS} == "Darwin" ]] && package_image_maxosx
+    [[ ${OS} == "Linux" ]] && package_image_linux
+}
+
+function package_image_maxosx(){
+    eval "$(docker-machine env default)"
+    ( docker build --tag=${PREFIX} . ) || { echo "ERROR: Docker build failed!"; exit 1; }
+
+}
+
+function package_image_linux(){
+    ( sg docker -c "docker build --tag=${PREFIX} ." ) || { echo "ERROR: Docker build failed!"; exit 1; }
 }
 
 function publish(){
