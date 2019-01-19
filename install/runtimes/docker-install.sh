@@ -43,6 +43,7 @@ function docker_setup_macosx() {
         docker --version || { echo "Re-installing docker..."; brew reinstall docker; [ $? -ne 0 ] && exit 1; }
         docker-machine --version || { echo "Installing docker machine..."; brew install docker-machine; [ $? -ne 0 ] && exit 1; }
     fi
+    brew upgrade docker
 
     docker-machine ls | grep default
     if [[ $? -ne 0 ]]; then

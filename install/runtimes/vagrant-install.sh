@@ -20,6 +20,8 @@ function vagrant_setup_macosx(){
     which vagrant || { echo "Installing vagrant..."; brew cask install vagrant; [ $? -ne 0 ] && exit 1; }
     brew cask list vagrant-manager || { echo "Installing vagrant-manager..."; brew cask install vagrant-manager; [ $? -ne 0 ] && exit 1; }
     (vagrant plugin list | grep vagrant-bindfs) || { echo "Installing vagrant-bindfs..."; vagrant plugin install vagrant-bindfs; [ $? -ne 0 ] && exit 1; }
+    echo "Attempting to upgrade vagrant..."
+    brew upgrade vagrant
 }
 
 trap info EXIT
