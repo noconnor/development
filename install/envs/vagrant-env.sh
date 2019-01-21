@@ -35,6 +35,7 @@ function download_vagrant_file(){
 }
 
 function initialise_environment(){
+    vagrant box update --box ${IMAGE}
     vagrant up
     log "INFO: Access vm by running: vagrant ssh"
     log "INFO: Destroy vm by running: vagrant destroy"
