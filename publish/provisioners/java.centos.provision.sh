@@ -34,6 +34,6 @@ export JAVA_HOME=/opt/${JDK8}
 export JRE_HOME=/opt/${JDK8}/jre
 export PATH=$PATH:/opt/${JDK8}/bin:/opt/${JDK8}/jre/bin
 EOL
-chmod +x /etc/profile.d/python3.sh
+chmod +x /etc/profile.d/java.sh
 
 yum clean all
