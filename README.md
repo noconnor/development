@@ -37,5 +37,13 @@ curl -o- "${INSTALL}" | bash -s -- --runtime docker --image noconnorie/aws.cento
 
 ```
 
+<br />
+
+## TODO:
+
+* Fix aws.centos vagrant build (*pip not found*)
+* Add serverless.io to aws.centos
+* Add ubuntu images
+* Vagrant: Auto detect port-forwarding or input from command line at run time? 
 
 <br />
