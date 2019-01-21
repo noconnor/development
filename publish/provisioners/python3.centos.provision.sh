@@ -20,7 +20,7 @@ yum -y install python36u-pip
 yum -y install python36u-devel
 
 cat > /etc/profile.d/python3.sh <<EOL
-if [ ! -d \${HOME}/venv ]; then
+if [ ! -d \${HOME}/py3 ]; then
     echo "Creating default python3.6 env"
     (
         cd \${HOME}

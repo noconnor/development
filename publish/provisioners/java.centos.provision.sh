@@ -29,8 +29,11 @@ alternatives --set java /opt/${JDK8}/bin/java
 alternatives --set jar /opt/${JDK8}/bin/jar
 alternatives --set javac /opt/${JDK8}/bin/javac
 
-echo "export JAVA_HOME=/opt/${JDK8}" >> /etc/bashrc
-echo "export JRE_HOME=/opt/${JDK8}/jre" >> /etc/bashrc
-echo "export PATH=$PATH:/opt/${JDK8}/bin:/opt/${JDK8}/jre/bin" >> /etc/bashrc
+cat > /etc/profile.d/java.sh <<EOL
+export JAVA_HOME=/opt/${JDK8}
+export JRE_HOME=/opt/${JDK8}/jre
+export PATH=$PATH:/opt/${JDK8}/bin:/opt/${JDK8}/jre/bin
+EOL
+chmod +x /etc/profile.d/python3.sh
 
 yum clean all
