@@ -20,8 +20,8 @@ The following table describes the available publish script options:
 # Build and publish a docker container based on the provision script provisioners/python3.centos.provision.sh
 ./publish --runtime docker --image noconnorie/python3.centos
 
-# Build and publish a vagrant vm based on the provision script provisioners/react.centos.provision.sh
-./publish --runtime vagrant --image noconnorie/react.centos
+# Build and publish a vagrant vm based on the provision script provisioners/aws.centos.provision.sh
+./publish --runtime vagrant --image noconnorie/aws.centos
 
 ```
 
@@ -32,7 +32,7 @@ The following table describes the available publish script options:
 To add a new **docker** image:
 
 * Add a new provisioner script to the provisioners directory
-* Ensure the new script has the `DOCKER_BASE` and `DOCKER_EXPOSE` headers set (see [react.centos.provision.sh](provisioners/react.centos.provision.sh) for an example)
+* Ensure the new script has the `DOCKER_BASE` and `DOCKER_EXPOSE` headers set (see [aws.centos.provision.sh](provisioners/aws.centos.provision.sh) for an example)
 
 That should be it, next step would be to run the publish script to make docker image available
 
@@ -41,7 +41,7 @@ That should be it, next step would be to run the publish script to make docker i
 To add a new **vagrant** image:
 
 * Add a new provisioner script to the provisioners directory
-* Ensure the new script has the `VAGRANT_BASE` headers set (see [react.centos.provision.sh](provisioners/react.centos.provision.sh) for an example)
+* Ensure the new script has the `VAGRANT_BASE` headers set (see [aws.centos.provision.sh](provisioners/aws.centos.provision.sh) for an example)
 * If needed add a new Vagrant file to the [vagrant directory](../vagrant/) (see [react.centos.Vagrantfile](../vagrant/react.centos.Vagrantfile) for an example)
 
 That should be it, next step would be to run the publish script to make vagrant image available.

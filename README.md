@@ -33,7 +33,7 @@ curl -o- "${INSTALL}" | bash -s -- --framework vagrant
 curl -o- "${INSTALL}" | bash -s -- --runtime vagrant --image noconnorie/python3.centos
 
 # Install a docker centos development environment with node pre-installed
-curl -o- "${INSTALL}" | bash -s -- --runtime docker --image noconnorie/react.centos
+curl -o- "${INSTALL}" | bash -s -- --runtime docker --image noconnorie/aws.centos
 
 ```
 
