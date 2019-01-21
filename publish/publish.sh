@@ -39,11 +39,11 @@ do
     esac
 done
 
-[ -z ${TARGET_IMAGE+x} ] && { echo "Target image must be provided"; usage; exit 1; }
+[[ -z ${TARGET_IMAGE+x} ]] && { echo "Target image must be provided"; usage; exit 1; }
 
 function publish(){
     local publish_script="${PUBLISHERS_DIR}/${RUNTIME}-publish.sh"
-    [ ! -f ${publish_script} ] && { echo "Could not find publish script (${publish_script})"; exit 1; }
+    [[ ! -f ${publish_script} ]] && { echo "Could not find publish script (${publish_script})"; exit 1; }
     chmod +x ${publish_script}
     echo "Executing publish script ${publish_script}..."
     ${publish_script} ${TARGET_IMAGE}
