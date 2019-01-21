@@ -8,18 +8,30 @@
 yum -y update
 yum -y install yum-utils
 yum -y groupinstall development
-
 yum -y install epel-release
-yum install -y git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel
+yum -y install python-pip
+
+yum -y install git gcc zlib-devel bzip2-devel readline-devel sqlite-devel openssl-devel
 yum -y install libffi-devel
+
+yum -y install https://centos7.iuscommunity.org/ius-release.rpm
+yum -y install python36u
+yum -y install python36u-pip
+yum -y install python36u-devel
+
+cat > /etc/profile.d/python3.sh <<EOL
+if [ ! -d \${HOME}/venv ]; then
+    echo "Creating default python3.6 env"
+    (
+        cd \${HOME}
+        python3.6 -m venv py3
+        echo "alias py3init=\"source \${HOME}/py3/bin/activate\"" >> \${HOME}/.bash_profile
+        echo "echo \"run py3init to activate python3 environment\"" >> \${HOME}/.bash_profile
+    )
+fi
+EOL
+chmod +x /etc/profile.d/python3.sh
+
+pip install --upgrade pip
+
 yum clean all
-
-curl -L https://raw.github.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
-
-echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> /root/.bashrc
-echo 'eval "$(pyenv init -)"' >> /root/.bashrc
-echo 'eval "$(pyenv virtualenv-init -)"' >> /root/.bashrc
-echo '3.7.0' >> /root/.pyenv/version
-source /root/.bashrc && pyenv install 3.7.0
-source /root/.bashrc && pip install --upgrade pip
-

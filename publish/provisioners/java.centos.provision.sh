@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# VAGRANT_BASE centos/7
-# DOCKER_BASE centos:centos7
+# VAGRANT_BASE noconnorie/aws.centos
+# DOCKER_BASE noconnorie/aws.centos
 # DOCKER_EXPOSE 8080 8000
 
 yum -y update
