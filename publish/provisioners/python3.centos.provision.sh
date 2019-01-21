@@ -34,4 +34,6 @@ chmod +x /etc/profile.d/python3.sh
 
 pip install --upgrade pip
 
+echo 'alias ll="ls -al"' >> ~/.bashrc
+
 yum clean all

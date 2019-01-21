@@ -15,5 +15,3 @@ yum install -y nodejs
 pip install --upgrade awscli
 
 yum clean all
-
-echo 'alias ll="ls -al"' >> ~/.bashrc
