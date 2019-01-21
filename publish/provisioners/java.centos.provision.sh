@@ -4,6 +4,8 @@
 # DOCKER_BASE centos:centos7
 # DOCKER_EXPOSE 8080 8000
 
+yum -y update
+
 # https://tecadmin.net/install-java-8-on-centos-rhel-and-fedora/
 # latest https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 export JDK8=jdk1.8.0_201
