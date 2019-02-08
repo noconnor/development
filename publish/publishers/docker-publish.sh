@@ -14,7 +14,7 @@ OS=$(uname -s)
 
 
 function check_args(){
-    [ ! -f ${BOOTSTRAP} ] && { echo "${BOOTSTRAP} does not exist, bailing!"; exit 1; }
+    [[ ! -f ${BOOTSTRAP} ]] && { echo "${BOOTSTRAP} does not exist, bailing!"; exit 1; }
 }
 
 function initialise(){
@@ -30,7 +30,7 @@ function initialise(){
 }
 
 function cleanup(){
-    [ -d tmp ] && rm -rf tmp
+    [[ -d tmp ]] && rm -rf tmp
 }
 
 function package_image(){
@@ -41,7 +41,6 @@ function package_image(){
 function package_image_maxosx(){
     eval "$(docker-machine env default)"
     ( docker build --tag=${IMAGE} . ) || { echo "ERROR: Docker build failed!"; exit 1; }
-
 }
 
 function package_image_linux(){
@@ -53,7 +52,6 @@ function publish(){
     docker login
     docker tag ${IMAGE} ${IMAGE}:${DOCKER_IMG_VERSION}
     docker push ${IMAGE}:${DOCKER_IMG_VERSION}
-    docker image rm ${IMAGE}
 }
 
 trap cleanup EXIT
