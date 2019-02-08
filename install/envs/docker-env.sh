@@ -5,7 +5,7 @@ IMAGE=${1}
 IMAGE_NO_REPO=$( echo ${IMAGE} | cut -d'/' -f2-)
 
 # Defaults
-DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/envs/docker
+DOCKER_ROOT=https://raw.githubusercontent.com/noconnor/development/master/install/envs/docker/
 
 OS=$(uname -s)
 MOUNT_DIR=${MOUNT_DIR:-$(pwd)}
