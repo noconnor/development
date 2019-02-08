@@ -63,10 +63,13 @@ function docker_setup_macosx() {
         echo "Installing docker-sync...";
         brew install unison
         brew install eugenmayer/dockersync/unox
-        gem install docker-sync
+        gem install docker-sync -v '>= 0.5.11-beta3'
         [ $? -ne 0 ] && log "WARN: docker-sync install failed, see http://docker-sync.io/"
     fi
-
+    
+    brew upgrade unison
+    brew upgrade eugenmayer/dockersync/unox
+    gem update docker-sync
 }
 
 
