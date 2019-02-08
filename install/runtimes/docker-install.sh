@@ -35,15 +35,14 @@ function docker_setup_linux() {
 }
 
 function docker_setup_macosx() {
-    docker --version
-    if [[ $? -ne 0 ]]; then
-        which brew || { log "WARN: brew is required, see https://brew.sh/"; exit 1; }
-        which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
-        docker --version || { echo "Installing docker..."; brew install docker; [ $? -ne 0 ] && exit 1; }
-        docker --version || { echo "Re-installing docker..."; brew reinstall docker; [ $? -ne 0 ] && exit 1; }
-        docker-machine --version || { echo "Installing docker machine..."; brew install docker-machine; [ $? -ne 0 ] && exit 1; }
-    fi
+    which brew || { log "WARN: brew is required, see https://brew.sh/"; exit 1; }
+    which virtualbox || { echo "Installing virtualbox..."; brew cask install virtualbox; [ $? -ne 0 ] && exit 1; }
+    docker --version || { echo "Installing docker..."; brew install docker; [ $? -ne 0 ] && exit 1; }
+    docker-machine --version || { echo "Installing docker machine..."; brew install docker-machine; [ $? -ne 0 ] && exit 1; }
+
+    brew cask upgrade virtualbox
     brew upgrade docker
+    brew upgrade docker-machine
 
     docker-machine ls | grep default
     if [[ $? -ne 0 ]]; then
